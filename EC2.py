@@ -101,5 +101,10 @@ if __name__ == '__main__':
                 pass
 
     #删除3天前快照
-    #for snap in ec2_snap_descripte():
-    #    del_3days_ago_snap(snap[1])
+    for snap in ec2_snap_descripte():
+        try:
+            del_3days_ago_snap(snap[1])
+            time.sleep(30)
+        except Exception as err:
+            print(err)
+            pass
