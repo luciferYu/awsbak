@@ -2,11 +2,14 @@
 # -*- coding: utf-8 -*-
 __author__ = 'zhiyi'
 
+
 #加载配置文件处理库
 import configparser
 #加载AWS库
 import boto3
 import pprint
+import datetime
+import time
 
 #读取配置文件函数
 def get_conf_dict(group):
@@ -48,10 +51,26 @@ def ec2_create_snapshot(conn,volid,descrip):
     response = client.create_snapshot(VolumeId=volid,Description=descrip)
     print(response)
 
+def ec2_snap_descripte():
+    # 描述快照
+    conn_conf = get_conf_dict('oms')
+    conn2 = get_conn(**conn_conf)
+    client = conn2().client('ec2')
+    response = client.describe_snapshots(OwnerIds=['709388460174'])
+    # pprint.pprint(response)
+    pprint.pprint(len([(snap['Description'], snap['SnapshotId']) for snap in response['Snapshots']]))
+
 
 if __name__ == '__main__':
     conn_conf = get_conf_dict('oms')
     conn = get_conn(**conn_conf)
-    print(list_ec2_vol(conn))
-    conn2 = get_conn(**conn_conf)
-    ec2_create_snapshot(conn2,'vol-ec025869','ops-20170509-python')
+    for des in list_ec2_vol(conn):
+        for vol in des[3]:
+            nowtime = datetime.datetime.now().strftime('%Y%m%d')
+            desc = ('%s-%s-%s-For-%s-%s' %(nowtime,'snap',vol,des[1],des[2]))
+            print(desc)
+            #time.sleep(60)
+            #conn2 = get_conn(**conn_conf)
+            #ec2_create_snapshot(conn,vol,desc)
+    #ec2_create_snapshot(conn,'vol-587f689d','20170510-snap-vol-587f689d')
+
