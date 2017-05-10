@@ -42,8 +42,8 @@ def list_ec2_vol(conn):
     listec2vol = []
     for instances in response['Reservations']:
         for instance in instances['Instances']:
-            insid, tag, ip, volid = instance['InstanceId'], instance['Tags'][0]['Value'], instance['PrivateIpAddress'],[ins['Ebs']['VolumeId'] for ins in instance['BlockDeviceMappings']]
-            listec2vol.append([insid,tag,ip,volid])
+            insid, tag, ip, volid,dn = instance['InstanceId'], instance['Tags'][0]['Value'], instance['PrivateIpAddress'],[ins['Ebs']['VolumeId'] for ins in instance['BlockDeviceMappings']],instance['BlockDeviceMappings'][0]['DeviceName']
+            listec2vol.append([insid,tag,ip,volid,dn])
     return listec2vol
 
 def ec2_create_snapshot(conn,volid,descrip):
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     for des in list_ec2_vol(conn):
         for vol in des[3]:
             nowtime = datetime.datetime.now().strftime('%Y%m%d')
-            desc = ('%s-%s-%s-For-%s-%s' %(nowtime,'snap',vol,des[1],des[2]))
+            desc = ('%s-%s-%s-For-%s-%s-%s' %(nowtime,'snap',vol,des[1],des[2],des[4]))
             print(desc)
             #time.sleep(60)
             #conn2 = get_conn(**conn_conf)
