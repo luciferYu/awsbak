@@ -67,10 +67,14 @@ if __name__ == '__main__':
     for des in list_ec2_vol(conn):
         for vol in des[3]:
             nowtime = datetime.datetime.now().strftime('%Y%m%d')
-            desc = ('%s-%s-%s-For-%s-%s-%s' %(nowtime,'snap',vol,des[1],des[2],des[4]))
+            desc = ('%s-%s-%s-For-%s-%s' %(nowtime,'snap',vol,des[2],des[4]))
             print(desc)
-            #time.sleep(60)
-            #conn2 = get_conn(**conn_conf)
-            #ec2_create_snapshot(conn,vol,desc)
+            try:
+                #conn2 = get_conn(**conn_conf)
+                ec2_create_snapshot(conn,vol,desc)
+                time.sleep(90)
+            except Exception as err:
+                print(err)
+                pass
     #ec2_create_snapshot(conn,'vol-587f689d','20170510-snap-vol-587f689d')
 
